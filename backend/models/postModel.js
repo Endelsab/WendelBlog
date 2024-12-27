@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema(
 		description: {
 			type: String,
 			default: "",
+			required: true,
 		},
 		postImage: {
 			type: String,
@@ -13,6 +14,7 @@ const userSchema = new mongoose.Schema(
 		postUser: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User",
+			required: true,
 		},
 	},
 	{ timestamps: true },
