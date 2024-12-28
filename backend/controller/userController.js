@@ -1,17 +1,22 @@
-import cloudinary from "../config/cloudinary.js";
+// import cloudinary from "../config/cloudinary.js";
 import generateTokenAndSetCookie from "../config/cookiesAndToken.js";
 import UserModel from "../models/userModel.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const signUp = async (req, res) => {
 	try {
-		const { firstName, lastName, email, password, image } = req.body;
+		const { firstname, lastname, email, password } = req.body;
 
-		if (!firstName || !lastName || !email || !password) {
+		// Validate input
+		if (!firstname || !lastname || !email || !password) {
 			return res.status(400).json({
 				success: false,
 				message: "All fields are required",
 			});
 		}
+
 		if (password.length < 6) {
 			return res.status(400).json({
 				success: false,
@@ -19,40 +24,39 @@ export const signUp = async (req, res) => {
 			});
 		}
 
-		let imageUrl = null;
-
-		if (image) {
-			const uploadResponse = await cloudinary.uploader.upload(image, {
-				folder: "users",
-				resource_type: "image",
-			});
-			imageUrl = uploadResponse.secure_url;
-		}
-
+		// Create user
 		const newUser = await UserModel.create({
-			firstName,
-			lastName,
+			firstname,
+			lastname,
 			email,
 			password,
-			image: imageUrl,
 		});
 
-		if (newUser) {
-			generateTokenAndSetCookie(newUser._id, res);
-			await newUser.save();
-
-			res.status(201).json({
-				success: true,
-				user: newUser,
+		// If user creation fails (unlikely due to the `try` block)
+		if (!newUser) {
+			return res.status(400).json({
+				success: false,
+				message: "Failed to create user",
 			});
-		} else {
-			res.status(400).json({ error: "Invalid user data" });
 		}
+
+		// Generate token and set cookie
+		generateTokenAndSetCookie(newUser._id, res);
+
+		// Respond with success and user data
+		return res.status(201).json({
+			success: true,
+			user: newUser,
+		});
 	} catch (error) {
-		console.log("error in signup controller ", error.message);
-		res
-			.status(500)
-			.json({ message: "Internal server error", error: error.message });
+		console.error("Error in signUp controller:", error.message);
+
+		// Respond with a generic error message
+		return res.status(500).json({
+			success: false,
+			message: "An error occurred while processing your request",
+			error: error.message, // Optionally remove in production
+		});
 	}
 };
 
@@ -90,6 +94,44 @@ export const login = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-	res.clearCookie("jwt");
-	res.status(200).json({ success: true, message: "Logged out successfully" });
+	try {
+		// Clear the cookie with proper configurations
+		res.clearCookie("jwt", {
+			httpOnly: true,
+			secure: process.env.NODE_ENV !== "development",
+			sameSite: "strict",
+		});
+		return res
+			.status(200)
+			.json({ success: true, message: "Logged out successfully" });
+	} catch (error) {
+		console.error("Error during logout:", error.message);
+		return res.status(500).json({
+			success: false,
+			message: "Internal server error during logout",
+		});
+	}
+};
+export const getUser = async (req, res) => {
+	try {
+		const user = await UserModel.findById(req.user._id).select("-password");
+
+		if (!user) {
+			return res.status(404).json({
+				success: false,
+				message: "User not found",
+			});
+		}
+
+		res.status(200).json({
+			success: true,
+			user,
+		});
+	} catch (error) {
+		console.error("Error in getUser controller:", error.message);
+		res.status(500).json({
+			success: false,
+			message: "Internal server error",
+		});
+	}
 };

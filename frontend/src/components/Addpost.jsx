@@ -23,7 +23,7 @@ const Addpost = () => {
 	const [isPost, setIsPost] = useState(false);
 
 	return (
-		<div className="p-4 mt-2  md:w-[45rem] bg-white shadow-md rounded-lg flex gap-4 justify-between text-sm">
+		<div className=" p-4 mt-2  md:w-[45rem] bg-white shadow-md rounded-lg flex gap-4 justify-between text-sm">
 			{/* AVATAR */}
 			<img
 				src={logo}

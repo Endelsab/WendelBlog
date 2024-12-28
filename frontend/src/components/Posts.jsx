@@ -20,9 +20,9 @@ const Posts = () => {
 				<div className="w-full min-h-96 ">
 					<img
 						src={avatar}
-						fill
+					
 						className="object-cover rounded-md size-80 mt-2"
-						alt=""
+						alt="avatar"
 					/>
 					<p className=" mt-2 text-gray-800">
 						{" "}

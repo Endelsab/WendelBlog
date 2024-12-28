@@ -1,19 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../assets/0a2a93d6-2841-4c61-afd3-e4cb49923a04.jfif";
 import { Link } from "react-router";
 
 const Navbar = () => {
 	const [open, setOpen] = useState(false);
+
+	// Disable scroll when the menu is open
+	useEffect(() => {
+		if (open) {
+			document.body.style.overflow = "hidden";
+		} else {
+			document.body.style.overflow = "auto";
+		}
+		return () => (document.body.style.overflow = "auto");
+	}, [open]);
+
 	return (
-		<div className="w-full h-16 md:h-20 flex items-center justify-between ">
-			<Link to="/home" className="flex items-center gap-4 text-2xl ">
+		<div className="w-full h-16 md:h-20 flex items-center justify-between relative">
+			<Link to="/home" className="flex items-center gap-4 text-2xl">
 				<img
 					src={logo}
 					alt="logo"
-					className=" mt-4 object-cover size-16 rounded-full "
+					className="mt-4 object-cover size-16 rounded-full"
 				/>
 
-				<span className="text-sky-500 font-bold">WendelBlog</span>
+				<span className="text-sky-500 font-extrabold">WendelBlog</span>
 			</Link>
 
 			{/* MOBILE MENU */}
@@ -39,23 +50,23 @@ const Navbar = () => {
 				</div>
 				{/* MOBILE LINK LIST */}
 				<div
-					className={`w-full h-screen bg-[#e6e6ff] flex flex-col items-center justify-center gap-8 font-medium text-lg absolute top-16 transition-all ease-in-out ${
-						open ? "-right-0" : "-right-[100%]"
+					className={`w-full h-screen bg-[#e6e6ff] flex flex-col items-center justify-center gap-8 font-medium text-lg fixed top-0 left-0 z-50 transition-all ease-in-out ${
+						open ? "translate-x-0" : "-translate-x-full"
 					}`}>
 					<Link
-						className="hover:text-sky-500 transition-all ease-in-out "
+						className="hover:text-sky-500 transition-all ease-in-out"
 						to="/"
 						onClick={() => setOpen(false)}>
 						Home
 					</Link>
 					<Link
-						className="hover:text-sky-500 transition-all ease-in-out "
+						className="hover:text-sky-500 transition-all ease-in-out"
 						to="/posts?sort=trending"
 						onClick={() => setOpen(false)}>
 						About
 					</Link>
 					<Link
-						className="hover:text-sky-500 transition-all ease-in-out "
+						className="hover:text-sky-500 transition-all ease-in-out"
 						to="/posts?sort=popular"
 						onClick={() => setOpen(false)}>
 						Profile
@@ -71,17 +82,17 @@ const Navbar = () => {
 
 			{/* DESKTOP MENU */}
 			<div className="hidden md:flex items-center gap-8 xl:gap-12 font-medium">
-				<Link to="/" className="hover:text-sky-500 transition-all ease-in-out ">
+				<Link to="/" className="hover:text-sky-500 transition-all ease-in-out">
 					Home
 				</Link>
 				<Link
 					to="/posts?sort=trending"
-					className="hover:text-sky-500 transition-all ease-in-out ">
+					className="hover:text-sky-500 transition-all ease-in-out">
 					About
 				</Link>
 				<Link
 					to="/posts?sort=popular"
-					className="hover:text-sky-500 transition-all ease-in-out ">
+					className="hover:text-sky-500 transition-all ease-in-out">
 					Profile
 				</Link>
 

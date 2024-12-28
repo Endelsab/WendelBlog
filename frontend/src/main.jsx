@@ -7,6 +7,8 @@ import MainLayout from "./layout/MainLayout.jsx";
 import "./index.css";
 
 import Homepage from "./pages/Homepage.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
 
 const router = createBrowserRouter([
 	{
@@ -15,6 +17,14 @@ const router = createBrowserRouter([
 			{
 				path: "/",
 				element: <Homepage />,
+			},
+			{
+				path: "/register",
+				element: <RegisterPage />,
+			},
+			{
+				path: "/login",
+				element: <LoginPage />,
 			},
 		],
 	},
